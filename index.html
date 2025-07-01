@@ -309,6 +309,14 @@
       color: #bbb;
       font-size: 0.97em;
     }
+    .verified {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 0.2em;
+      margin-bottom: 0.12em;
+      width: 1.1em;
+      height: 1.1em;
+    }
     @media (max-width: 520px) {
       .container { padding: 1.1rem 0.3rem 1.1rem 0.3rem;}
       .title { font-size: 1.27em; }
@@ -350,7 +358,7 @@
         all: "All",
         active: "Active",
         completed: "Completed",
-        author: "Your Name",
+        author: "Hapyjames",
         edit: "Edit",
         delete: "Delete",
         save: "Save",
@@ -376,7 +384,7 @@
         all: "Toutes",
         active: "Actives",
         completed: "Terminées",
-        author: "Votre Nom",
+        author: "Hapyjames",
         edit: "Modifier",
         delete: "Supprimer",
         save: "Enregistrer",
@@ -547,7 +555,17 @@
         <div class="filters">${filterBtns}</div>
         ${calTip}
         <div id="tasksWrap">${tasksList}</div>
-        <div class="credits">© 2025 <span>${t('author')}</span></div>
+        <div class="credits">
+          © 2025 
+          <span style="font-weight:600;color:#4f46e5;">
+            Hapyjames
+            <svg class="verified" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="15" fill="#fff" />
+              <circle cx="16" cy="16" r="13" fill="#2196f3"/>
+              <path d="M11.5 16.5L15 20l5.5-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
       `;
       // Set up listeners
       document.getElementById('addForm').onsubmit = function(e){
