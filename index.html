@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager Advanced</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --accent: #ffd600;
+      --bg: #f9f9fc;
+      --card: #fff;
+      --text: #232323;
+      --radius: 1.1rem;
+      --shadow: 0 8px 24px rgba(79,70,229,0.09);
+    }
+    [data-theme="dark"] {
+      --primary: #7c83fd;
+      --accent: #ffd600;
+      --bg: #23223b;
+      --card: #2a2a40;
+      --text: #f9f9fc;
+      --shadow: 0 8px 24px rgba(79,70,229,0.15);
+    }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.25s, color 0.2s;
+    }
+    .container {
+      max-width: 420px;
+      margin: 2.5rem auto 2rem auto;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.5rem 1.5rem 1.7rem 1.5rem;
+      width: 98vw;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .top-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .toggle-btn, .lang-btn, .notif-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 1.2em;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.17s;
+      margin-left: 0.08em;
+    }
+    .toggle-btn:hover, .lang-btn:hover, .notif-btn:hover { background: #f7f5f5; }
+    [data-theme="dark"] .toggle-btn:hover, [data-theme="dark"] .lang-btn:hover, [data-theme="dark"] .notif-btn:hover { background: #2a2a40; }
+    .user-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      margin-bottom: 1.2em;
+      flex-wrap: wrap;
+    }
+    .user-info {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1.05em;
+      overflow-x: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      display: inline-block;
+      vertical-align: middle;
+      direction: ltr;
+    }
+    .logout-btn {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      border-radius: 0.8em;
+      padding: 0.5em 1em;
+      font-size: 0.98em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-left: 0.5em;
+    }
+    .logout-btn:hover { background: #fff082; }
+    .login-form, .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      margin-bottom: 1.4em;
+    }
+    .login-form input, .signup-form input {
+      padding: 0.7em 1em;
+      border-radius: 0.7em;
+      border: 1px solid #bbb;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1em;
+    }
+    .login-btn, .signup-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0.7em;
+      padding: 0.7em 1.3em;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.4em;
+    }
+    .login-btn:hover, .signup-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+    .switch-auth {
+      color: #666;
+      font-size: 0.98em;
+      margin: 0.4em 0 0.8em 0;
+      text-align: center;
+    }
+    .switch-auth span {
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 0.2em;
+    }
+    .add-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.7rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .add-form input[type="text"] {
+      flex: 1 1 130px;
+      padding: 0.7em 1em;
+      font-size: 1em;
+      border-radius: 0.7em;
+      border: 1px solid #bbb;
+      background: var(--bg);
+      color: var(--text);
+      min-width: 110px;
+    }
+    .add-form input[type="date"] {
+      padding: 0.7em 0.7em;
+      border-radius: 0.7em;
+      border: 1px solid #bbb;
+      font-size: 1em;
+      background: var(--bg);
+      color: var(--text);
+      min-width: 110px;
+    }
+    .add-btn, .calendar-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0.7em;
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .add-btn:hover, .calendar-btn:hover { background: var(--accent); color: var(--primary);}
+    .filters {
+      display: flex;
+      gap: 1em;
+      justify-content: center;
+      margin-bottom: 1.1em;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 1em;
+      font-weight: 600;
+      padding: 0.3em 1em;
+      border-radius: 0.8em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+    .tasks-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      min-height: 45px;
+    }
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      background: #f2f3fd;
+      border-radius: 0.7em;
+      margin-bottom: 0.7em;
+      padding: 0.7em 0.7em 0.7em 0.8em;
+      font-size: 1.08em;
+      box-shadow: 0 2px 8px #4f46e511;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+    }
+    [data-theme="dark"] .task-row { background: #23223b; }
+    .task-row.completed {
+      opacity: 0.62;
+      text-decoration: line-through;
+      color: #666;
+    }
+    .task-checkbox {
+      width: 1.4em;
+      height: 1.4em;
+      accent-color: var(--primary);
+      cursor: pointer;
+      min-width: 1.4em;
+      min-height: 1.4em;
+    }
+    .task-text {
+      flex: 1;
+      word-break: normal;
+      white-space: normal;
+      display: inline;
+    }
+    .due-date {
+      font-size: 0.91em;
+      color: #888;
+      margin-left: 0.2em;
+      margin-right: 0.5em;
+      font-weight: 500;
+      background: #ffd60022;
+      border-radius: 0.7em;
+      padding: 0.05em 0.7em;
+      display: inline-block;
+      min-width: 70px;
+      text-align: center;
+    }
+    .due-date.overdue { color: #d32f2f; background: #ffd6d6; }
+    .edit-btn, .del-btn, .calendar-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      transition: background 0.16s;
+      margin-left: 0.1em;
+    }
+    .edit-btn:hover, .del-btn:hover, .calendar-btn:hover { background: #f7f5f5; }
+    [data-theme="dark"] .edit-btn:hover, [data-theme="dark"] .del-btn:hover, [data-theme="dark"] .calendar-btn:hover { background: #2a2a40;}
+    .empty-msg {
+      color: #888;
+      text-align: center;
+      margin: 2.3em 0 1em 0;
+      font-size: 1em;
+    }
+    .notif-bar {
+      text-align: center;
+      margin-bottom: 1.1em;
+      color: #d32f2f;
+      font-size: 1.04em;
+      font-weight: 600;
+      display: none;
+    }
+    .calendar-link {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .calendar-link a {
+      color: var(--primary);
+      background: var(--accent);
+      border-radius: 0.6em;
+      padding: 0.4em 1.1em;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .calendar-link a:hover { background: var(--primary); color: #fff;}
+    .credits {
+      margin-top: 2.2em;
+      text-align: center;
+      color: #bbb;
+      font-size: 0.97em;
+    }
+    @media (max-width: 520px) {
+      .container { padding: 1.1rem 0.3rem 1.1rem 0.3rem;}
+      .title { font-size: 1.27em; }
+      .add-form input[type="text"], .add-form input[type="date"] { font-size: 0.98em; }
+      .add-btn, .calendar-btn { padding: 0.63em 0.9em; }
+      .task-row { font-size: 0.97em; }
+      .user-info { max-width: 120px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <!-- Content will be rendered here -->
+  </div>
+  <script>
+    // --- Dark Mode ---
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      const btn = document.getElementById('darkModeToggle');
+      if(btn) {
+        btn.innerHTML = theme === 'dark' ? '&#9789;' : '&#9788;';
+        btn.title = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      }
+    }
+    (function(){
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(saved ? saved : (prefersDark ? 'dark' : 'light'));
+    })();
+
+    // --- Multi-language ---
+    const translations = {
+      en: {
+        appTitle: "Task Manager",
+        addTask: "Add a new task...",
+        dueDate: "Due Date",
+        add: "Add",
+        all: "All",
+        active: "Active",
+        completed: "Completed",
+        author: "Your Name",
+        edit: "Edit",
+        delete: "Delete",
+        save: "Save",
+        cancel: "Cancel",
+        empty: "No tasks yet.",
+        login: "Login",
+        signup: "Sign Up",
+        username: "Username",
+        password: "Password",
+        logout: "Logout",
+        switchToLogin: "Already have an account?",
+        switchToSignup: "No account?",
+        overdue: "Overdue",
+        notifOverdue: "You have tasks overdue!",
+        calendar: "Add to Google Calendar",
+        calendarTip: "Click the calendar icon beside a task to add it to your Google Calendar.",
+      },
+      fr: {
+        appTitle: "Gestionnaire de tâches",
+        addTask: "Ajouter une nouvelle tâche...",
+        dueDate: "Échéance",
+        add: "Ajouter",
+        all: "Toutes",
+        active: "Actives",
+        completed: "Terminées",
+        author: "Votre Nom",
+        edit: "Modifier",
+        delete: "Supprimer",
+        save: "Enregistrer",
+        cancel: "Annuler",
+        empty: "Aucune tâche pour le moment.",
+        login: "Connexion",
+        signup: "Créer un compte",
+        username: "Nom d'utilisateur",
+        password: "Mot de passe",
+        logout: "Déconnexion",
+        switchToLogin: "Vous avez déjà un compte ?",
+        switchToSignup: "Pas de compte ?",
+        overdue: "En retard",
+        notifOverdue: "Vous avez des tâches en retard !",
+        calendar: "Ajouter à Google Agenda",
+        calendarTip: "Cliquez sur l’icône agenda à côté d’une tâche pour l’ajouter à Google Agenda.",
+      }
+    };
+    let currentLang = localStorage.getItem('lang') || 'en';
+    function t(key) {
+      return translations[currentLang][key] || key;
+    }
+    // --- User Accounts ---
+    function loadUsers() {
+      return JSON.parse(localStorage.getItem('tm_users') || '[]');
+    }
+    function saveUsers(users) {
+      localStorage.setItem('tm_users', JSON.stringify(users));
+    }
+    function loadAuth() {
+      return JSON.parse(localStorage.getItem('tm_auth') || 'null');
+    }
+    function saveAuth(user) {
+      localStorage.setItem('tm_auth', JSON.stringify(user));
+    }
+    // --- Tasks per user ---
+    function tasksKey(username) { return `tm_tasks_${username}`; }
+    function loadTasks(username) {
+      return JSON.parse(localStorage.getItem(tasksKey(username)) || '[]');
+    }
+    function saveTasks(username, tasks) {
+      localStorage.setItem(tasksKey(username), JSON.stringify(tasks));
+    }
+    // --- State ---
+    let users = loadUsers();
+    let currentUser = loadAuth();
+    let tasks = currentUser ? loadTasks(currentUser.username) : [];
+    let editingId = null;
+    let filter = 'all';
+    let showTasks = true;
+
+    // --- Auth UI ---
+    function renderAuth(mode="login", errMsg="") {
+      document.getElementById('container').innerHTML = `
+        <div class="title-bar">
+          <span class="title">${t('appTitle')}</span>
+        </div>
+        <form class="${mode}-form" id="${mode}Form" autocomplete="off">
+          <input type="text" id="authUsername" placeholder="${t('username')}" required maxlength="24" autocomplete="username">
+          <input type="password" id="authPassword" placeholder="${t('password')}" required maxlength="32" autocomplete="${mode==='signup'?'new-password':'current-password'}">
+          <button type="submit" class="${mode}-btn">${t(mode)}</button>
+        </form>
+        <div class="switch-auth">
+          ${mode==="login" ? t('switchToSignup')+' <span onclick="renderAuth(\'signup\')">'+t('signup')+'</span>'
+                          : t('switchToLogin')+' <span onclick="renderAuth(\'login\')">'+t('login')+'</span>'}
+        </div>
+        ${errMsg?'<div class="empty-msg" style="color:#d32f2f;margin-top:1em;">'+errMsg+'</div>':''}
+      `;
+      document.getElementById(`${mode}Form`).onsubmit = function(e){
+        e.preventDefault();
+        const username = document.getElementById('authUsername').value.trim();
+        const password = document.getElementById('authPassword').value;
+        if (mode==='signup') {
+          if (users.find(u=>u.username===username)) return renderAuth(mode, "Username taken.");
+          users.push({username, password});
+          saveUsers(users);
+          currentUser = {username};
+          saveAuth(currentUser);
+          tasks = [];
+          saveTasks(username, tasks);
+          renderApp();
+        } else {
+          const user = users.find(u=>u.username===username && u.password===password);
+          if (!user) return renderAuth(mode, "Invalid credentials.");
+          currentUser = {username};
+          saveAuth(currentUser);
+          tasks = loadTasks(username);
+          renderApp();
+        }
+      }
+    }
+
+    // --- Add Task: show tasks after adding ---
+    function addTask(text, due) {
+      tasks.push({ id: Date.now(), text, completed: false, due });
+      saveTasks(currentUser.username, tasks);
+      editingId = null;
+      showTasks = true;
+      renderApp();
+    }
+
+    // --- Render Main App ---
+    function renderApp() {
+      if (!currentUser) { renderAuth("login"); return; }
+      // Notifications: overdue tasks
+      let overdue = tasks.some(t=>!t.completed && t.due && new Date(t.due) < new Date(new Date().toDateString()));
+      let notifBar = overdue ? `<div class="notif-bar" style="display:block">${t('notifOverdue')}</div>` : `<div class="notif-bar"></div>`;
+      // User bar
+      let userBar = `<div class="user-bar">
+        <span class="user-info">${currentUser.username}</span>
+        <button class="logout-btn" onclick="logout()">${t('logout')}</button>
+        <button class="toggle-btn" id="darkModeToggle" title="Toggle dark mode">&#9788;</button>
+        <button class="lang-btn" title="Switch language" id="langSwitcher">${currentLang.toUpperCase()}</button>
+      </div>`;
+      // Add form
+      let addForm = `<form class="add-form" id="addForm" autocomplete="off">
+        <input type="text" id="taskInput" placeholder="${t('addTask')}" required>
+        <input type="date" id="dueInput" title="${t('dueDate')}" min="${new Date().toISOString().slice(0,10)}">
+        <button class="add-btn" type="submit">${t('add')}</button>
+      </form>`;
+      // Filters
+      let filterBtns = `
+        <button class="filter-btn${filter==='all'?' active':''}" data-filter="all">${t('all')}</button>
+        <button class="filter-btn${filter==='active'?' active':''}" data-filter="active">${t('active')}</button>
+        <button class="filter-btn${filter==='completed'?' active':''}" data-filter="completed">${t('completed')}</button>
+      `;
+      // Calendar tip
+      let calTip = `<div class="calendar-link" style="font-size:0.99em;color:#888">${t('calendarTip')}</div>`;
+      // Tasks list
+      let tasksList = '';
+      if (showTasks) {
+        let filtered = tasks;
+        if (filter === 'active') filtered = tasks.filter(t=>!t.completed);
+        if (filter === 'completed') filtered = tasks.filter(t=>t.completed);
+        if (!filtered.length) {
+          tasksList = `<div class="empty-msg">${t('empty')}</div>`;
+        } else {
+          tasksList = '<ul class="tasks-list">';
+          filtered.forEach(task => {
+            let overdueTxt = '';
+            let isOverdue = false;
+            if (task.due) {
+              let dueObj = new Date(task.due);
+              let now = new Date(new Date().toDateString());
+              isOverdue = !task.completed && dueObj < now;
+              overdueTxt = `<span class="due-date${isOverdue?' overdue':''}" title="${t('dueDate')}">${task.due}${isOverdue ? ' • ' + t('overdue') : ''}</span>`;
+            }
+            tasksList += `<li class="task-row${task.completed ? ' completed' : ''}">
+              <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleComplete(${task.id})">
+              <span class="task-text">${task.text}</span>
+              ${overdueTxt}
+              <button class="calendar-btn" title="${t('calendar')}" onclick="addToCalendar(${task.id});event.stopPropagation();">&#128197;</button>
+              <button class="edit-btn" title="${t('edit')}" onclick="editTask(${task.id});event.stopPropagation();">&#9998;</button>
+              <button class="del-btn" title="${t('delete')}" onclick="deleteTask(${task.id});event.stopPropagation();">&#128465;</button>
+            </li>`;
+          });
+          tasksList += '</ul>';
+        }
+      }
+      // HTML
+      document.getElementById('container').innerHTML = `
+        <div class="title-bar">
+          <span class="title">${t('appTitle')}</span>
+        </div>
+        ${userBar}
+        ${notifBar}
+        ${addForm}
+        <div class="filters">${filterBtns}</div>
+        ${calTip}
+        <div id="tasksWrap">${tasksList}</div>
+        <div class="credits">© 2025 <span>${t('author')}</span></div>
+      `;
+      // Set up listeners
+      document.getElementById('addForm').onsubmit = function(e){
+        e.preventDefault();
+        const text = document.getElementById('taskInput').value.trim();
+        const due = document.getElementById('dueInput').value;
+        if (!text) return;
+        addTask(text, due);
+        // Show tasks on add
+        showTasks = true;
+        renderApp();
+      };
+      document.querySelectorAll('.filter-btn').forEach(btn=>{
+        btn.onclick = function() {
+          document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+          this.classList.add('active');
+          filter = this.getAttribute('data-filter');
+          showTasks = true;
+          renderApp();
+        }
+      });
+      document.getElementById('darkModeToggle').onclick = function() {
+        setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      };
+      document.getElementById('langSwitcher').onclick = function() {
+        currentLang = currentLang === 'en' ? 'fr' : 'en';
+        localStorage.setItem('lang', currentLang);
+        renderApp();
+      };
+    }
+    // --- Task Logic ---
+    function toggleComplete(id) {
+      const idx = tasks.findIndex(t=>t.id===id);
+      if (idx>-1) {
+        tasks[idx].completed = !tasks[idx].completed;
+        saveTasks(currentUser.username, tasks);
+        renderApp();
+      }
+    }
+    function deleteTask(id) {
+      tasks = tasks.filter(t=>t.id !== id);
+      saveTasks(currentUser.username, tasks);
+      renderApp();
+    }
+    function editTask(id) {
+      editingId = id;
+      const task = tasks.find(t=>t.id===id);
+      if (!task) return;
+      // Render edit form in place of tasks
+      document.getElementById('tasksWrap').innerHTML = `
+        <form class="add-form" id="editForm" autocomplete="off">
+          <input type="text" id="editTaskInput" value="${task.text.replace(/"/g, '&quot;')}" required>
+          <input type="date" id="editDueInput" value="${task.due||''}">
+          <button class="add-btn" type="submit">${t('save')}</button>
+          <button class="add-btn" type="button" onclick="editingId=null;renderApp();">${t('cancel')}</button>
+        </form>
+      `;
+      document.getElementById('editForm').onsubmit = function(e){
+        e.preventDefault();
+        const val = document.getElementById('editTaskInput').value.trim();
+        const due = document.getElementById('editDueInput').value;
+        if (!val) return;
+        task.text = val;
+        task.due = due;
+        saveTasks(currentUser.username, tasks);
+        editingId = null;
+        renderApp();
+      };
+    }
+    // --- Calendar Integration: Google Calendar link ---
+    function addToCalendar(id) {
+      const task = tasks.find(t=>t.id===id);
+      if (!task) return;
+      const title = encodeURIComponent(task.text);
+      const due = task.due ? new Date(task.due) : null;
+      let start = due ? new Date(due) : new Date();
+      let end = due ? new Date(due) : new Date();
+      end.setHours(23,59,59,999);
+      const startStr = start.toISOString().replace(/[-:]|(\.\d{3})/g,"").slice(0,15) + "Z";
+      const endStr = end.toISOString().replace(/[-:]|(\.\d{3})/g,"").slice(0,15) + "Z";
+      const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startStr}/${endStr}`;
+      window.open(url, "_blank");
+    }
+    // --- Logout ---
+    function logout() {
+      currentUser = null;
+      saveAuth(null);
+      editingId = null;
+      showTasks = true;
+      renderAuth("login");
+    }
+    // --- Make functions globally available for HTML event handlers
+    window.renderAuth = renderAuth;
+    window.logout = logout;
+    window.editTask = editTask;
+    window.toggleComplete = toggleComplete;
+    window.deleteTask = deleteTask;
+    window.addToCalendar = addToCalendar;
+    // --- Initial Render ---
+    renderApp();
+  </script>
+</body>
+</html>
